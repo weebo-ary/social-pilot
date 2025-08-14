@@ -2,6 +2,9 @@ import NextAuth from "next-auth";
 import LinkedInProvider from "next-auth/providers/linkedin";
 import { createClient } from "@supabase/supabase-js";
 
+import fs from "fs";
+import puppeteer from "puppeteer";
+
 export const authOptions = {
   providers: [
     LinkedInProvider({
@@ -17,10 +20,11 @@ export const authOptions = {
       },
       profile(profile) {
         return {
-          id: profile.sub,
+          id: profile.sub, // LinkedIn person ID
           name: profile.name,
           email: profile.email,
-          image: profile.image,
+          image: profile.picture,
+          linkedinId: profile.sub, // store separately for clarity
         };
       },
     }),
@@ -35,7 +39,6 @@ export const authOptions = {
         process.env.SUPABASE_SERVICE_ROLE_KEY
       );
 
-      // Try inserting — ignore duplicate key errors
       const { error } = await supabase.from("users").insert([
         {
           auth_id: user.id,
@@ -46,7 +49,6 @@ export const authOptions = {
       ]);
 
       if (error) {
-        // Ignore duplicate key errors
         if (error.code === "23505") {
           console.log("ℹ User already exists, skipping insert.");
         } else {
@@ -58,28 +60,22 @@ export const authOptions = {
       return true;
     },
 
-    async session({ session }) {
-      const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY
-      );
-
-      if (session?.user?.email) {
-        const { data } = await supabase
-          .from("users")
-          .select("auth_id, name, email, avatar_url")
-          .eq("email", session.user.email)
-          .single();
-
-        if (data) {
-          session.user.auth_id = data.auth_id;
-          session.user.name = data.name;
-          session.user.avatar_url = data.avatar_url;
-        }
+    // Save LinkedIn access_token to JWT
+    async jwt({ token, account, profile }) {
+      if (account && profile) {
+        token.accessToken = account.access_token;
+        token.linkedinId = profile.sub;
       }
+      return token;
+    },
 
+    // Add token data to session
+    async session({ session, token }) {
+      session.accessToken = token.accessToken;
+      session.user.linkedinId = token.linkedinId;
       return session;
     },
+    
   },
 };
 
