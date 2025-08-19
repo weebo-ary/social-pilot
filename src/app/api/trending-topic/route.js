@@ -118,11 +118,13 @@ async function generateWithFallback(prompt, genAI) {
 
 function safeParseJSON(text) {
   // Strip fences if any
-  const cleaned = text
+  let cleaned = text
     .trim()
     .replace(/^```json\s*/i, "")
     .replace(/^```\s*/i, "")
     .replace(/```$/i, "");
+  // Add quotes around hashtags that are not already quoted
+  cleaned = cleaned.replace(/(?<=[:,\[]\s*)#(\w+)/g, '"#$1"');
   return JSON.parse(cleaned);
 }
 

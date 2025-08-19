@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowUp, LucideGitGraph } from "lucide-react";
 import TrendingTopicsDeep from "./TrendingTopicDeep";
+import ScheduleButton from "./schedulePostButton";
 
 export default function Linkedin() {
   // Analyze states
@@ -173,21 +174,46 @@ export default function Linkedin() {
           <div className="space-y-4">
             <div className="flex gap-4">
               <div className="flex-1">
-                <Label>Post Type</Label>
+                <Label className="mb-2">Post Type</Label>
                 <Select value={postType} onValueChange={setPostType}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select post type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="announcement">Announcement</SelectItem>
-                    <SelectItem value="job">Job Posting</SelectItem>
-                    <SelectItem value="tip">Tip / Advice</SelectItem>
-                    <SelectItem value="event">Event</SelectItem>
+                    <SelectItem value="educational">Educational</SelectItem>
+                    <SelectItem value="storytelling">Storytelling</SelectItem>
+                    <SelectItem value="case-study">Case Study</SelectItem>
+                    <SelectItem value="thought-leadership">
+                      Thought Leadership
+                    </SelectItem>
+                    <SelectItem value="motivational">Motivational</SelectItem>
+                    <SelectItem value="personal-experience">
+                      Personal Experience
+                    </SelectItem>
+                    <SelectItem value="industry-trends">
+                      Industry Trends
+                    </SelectItem>
+                    <SelectItem value="how-to-guide">How-To Guide</SelectItem>
+                    <SelectItem value="company-update">
+                      Company Update
+                    </SelectItem>
+                    <SelectItem value="event-promo">Event Promotion</SelectItem>
+                    <SelectItem value="product-launch">
+                      Product Launch
+                    </SelectItem>
+                    <SelectItem value="customer-testimonial">
+                      Customer Testimonial
+                    </SelectItem>
+                    <SelectItem value="poll">Poll</SelectItem>
+                    <SelectItem value="listicle">Listicle</SelectItem>
+                    <SelectItem value="news">News</SelectItem>
+                    <SelectItem value="reaction">Reaction</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex-1">
-                <Label>Tone</Label>
+                <Label className="mb-2">Tone</Label>
                 <Select value={tone} onValueChange={setTone}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select tone" />
@@ -197,13 +223,25 @@ export default function Linkedin() {
                     <SelectItem value="casual">Casual</SelectItem>
                     <SelectItem value="motivational">Motivational</SelectItem>
                     <SelectItem value="humorous">Humorous</SelectItem>
+                    <SelectItem value="inspirational">Inspirational</SelectItem>
+                    <SelectItem value="persuasive">Persuasive</SelectItem>
+                    <SelectItem value="analytical">Analytical</SelectItem>
+                    <SelectItem value="storytelling">Storytelling</SelectItem>
+                    <SelectItem value="educational">Educational</SelectItem>
+                    <SelectItem value="visionary">Visionary</SelectItem>
+                    <SelectItem value="empathetic">Empathetic</SelectItem>
+                    <SelectItem value="confident">Confident</SelectItem>
+                    <SelectItem value="authoritative">Authoritative</SelectItem>
+                    <SelectItem value="optimistic">Optimistic</SelectItem>
+                    <SelectItem value="neutral">Neutral</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div>
-              <Label>Post Title</Label>
+              <Label className="mb-2">Post Title</Label>
               <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -212,7 +250,7 @@ export default function Linkedin() {
             </div>
 
             <div>
-              <Label>Post Content</Label>
+              <Label className="mb-2">Post Content</Label>
               <Textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
@@ -224,7 +262,7 @@ export default function Linkedin() {
             {/* Word Count & Emoji Options */}
             <div className="flex gap-4">
               <div>
-                <Label>Word Count</Label>
+                <Label className="mb-2">Word Count</Label>
                 <Select value={wordRange} onValueChange={setWordRange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select word range" />
@@ -237,7 +275,7 @@ export default function Linkedin() {
                 </Select>
               </div>
 
-              <div className="flex items-center mt-6">
+              <div className="flex items-center mt-5">
                 <input
                   type="checkbox"
                   checked={emoji}
@@ -248,13 +286,19 @@ export default function Linkedin() {
               </div>
             </div>
 
-            <Button
-              onClick={handleCreatePost}
-              disabled={loadingCreate}
-              className="w-full"
-            >
-              {loadingCreate ? "Creating..." : "Create Post"}
-            </Button>
+            
+              <div className="flex items-center justify-between w-1/3 gap-3">
+              <div className="border-r border-black pr-4">
+                <Button
+                  onClick={handleCreatePost}
+                  disabled={loadingCreate}
+                  className="w-full"
+                >
+                  {loadingCreate ? "Creating..." : "Create Post"}
+                </Button>
+              </div>
+              <ScheduleButton post={post} />
+            </div>
           </div>
 
           {/* Right: Live Preview */}
@@ -292,7 +336,12 @@ export default function Linkedin() {
                 rows={8}
                 style={{ width: "100%" }}
               />
-              <button className="bg-black text-white p-2 rounded-sm cursor-pointer hover:bg-gray-300 hover:text-black ease-in-out duration-500 flex flex-row-reverse gap-2" onClick={publishPost}>Post to LinkedIn <ArrowUp /> </button>
+              <button
+                className="bg-black text-white p-2 rounded-sm cursor-pointer hover:bg-gray-300 hover:text-black ease-in-out duration-500 flex flex-row-reverse gap-2"
+                onClick={publishPost}
+              >
+                Post to LinkedIn <ArrowUp />{" "}
+              </button>
             </div>
           )}
         </>

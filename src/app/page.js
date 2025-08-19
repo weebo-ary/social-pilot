@@ -1,14 +1,16 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import SignInPage from "./api/auth/signin/page";
+import Landing from "@/frontend-landing/App"
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
   if (session) {
-    redirect("/dashboard");
+    redirect("/dashboard/linkedin");
   }
 
-  return <SignInPage />;
+  return <>
+  <Landing />
+  </>;
 }
