@@ -16,23 +16,28 @@ export async function POST(req) {
     let prompt = `Create a LinkedIn ${postType} post with a ${tone} tone titled "${title}". Content: "${content}". 
     Use around ${wordRange} words. ${emoji ? "Include emojis." : "No emojis."} Add relevant trending hashtags.`;
 
-    let model;
+    let result;
     try {
-      // First try primary model
-      model = genAI.getGenerativeModel({ model: PRIMARY_MODEL });
-      var result = await model.generateContent(prompt);
+      // Try primary model
+      const model = genAI.getGenerativeModel({ model: PRIMARY_MODEL });
+      result = await model.generateContent(prompt);
     } catch (error) {
       console.warn("Primary model failed, switching to fallback:", error.message);
       // Use fallback model
-      model = genAI.getGenerativeModel({ model: FALLBACK_MODEL });
-      var result = await model.generateContent(prompt);
+      const fallbackModel = genAI.getGenerativeModel({ model: FALLBACK_MODEL });
+      result = await fallbackModel.generateContent(prompt);
     }
 
-    const response = await result.response.text();
+    let response = await result.response.text();
+
+    // 🔑 Ensure uniqueness: add zero-width space + unique ID
+    const uniqueSuffix = `\u200B #SocialPilot${Date.now()}`;
+    response = `${response}\n\n${uniqueSuffix}`;
+
     return NextResponse.json({ post: response });
 
   } catch (error) {
-    console.error(error);
+    console.error("Error in create-post API:", error);
     return NextResponse.json({ error: "Error creating post" }, { status: 500 });
   }
 }
