@@ -122,10 +122,10 @@ export default function Linkedin() {
 
   const publishPost = async () => {
     if (!post) return;
-    await fetch("/api/linkedin-publish", {
+    await fetch("/api/linkedin-direct-publish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: post }),
+      body: JSON.stringify({ post: post }),
     });
     alert("Posted to LinkedIn!");
   };

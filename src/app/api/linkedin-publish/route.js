@@ -28,12 +28,17 @@ export async function POST(req) {
       return NextResponse.json({ error: "Scheduled post not found or already processed" }, { status: 404 });
     }
 
+
+    // Generate a random id (UUID v4 style)
+    const randomId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+
     const linkedInPost = {
+      id: randomId,
       author: LINKEDIN_PROFILE_URN,
       lifecycleState: "PUBLISHED",
       specificContent: {
         "com.linkedin.ugc.ShareContent": {
-          shareCommentary: { text: post },
+          shareCommentary: { text: post, id: id },
           shareMediaCategory: "NONE"
         }
       },
