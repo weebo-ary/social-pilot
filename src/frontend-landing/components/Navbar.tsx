@@ -132,11 +132,20 @@ export const Navbar = () => {
           <div className="hidden md:flex gap-2">
             <Link
               rel="noreferrer noopener"
-              href="/signin/linkedin"
+              href="/signup"
               className={`flex gap-2 items-center border ${buttonVariants({ variant: "secondary" })}`}
             >
-              Sign in via <Linkedin />
+              Sign Up
             </Link>
+
+                <Link
+              rel="noreferrer noopener"
+              href="/signin"
+              className={`flex gap-2 items-center border ${buttonVariants({ variant: "secondary" })}`}
+            >
+              Sign In
+            </Link>
+
 
             <ModeToggle />
           </div>

@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import SPLogo from "@/assets/images/social-pilot-dark.jpg";
+import { useEffect } from "react";
+import LogoutButton from "./logoutbutton";
 
 export default function DashboardShell({ children }) {
   const { data: session, status } = useSession();
@@ -24,8 +26,16 @@ export default function DashboardShell({ children }) {
   const isActive = (route) =>
     pathname === route || pathname.startsWith(`${route}/`);
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "unauthenticated") return redirect("/");
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const res = await fetch("/api/me");
+      const data = await res.json();
+      setUser(data);
+    }
+    fetchUser();
+  }, []);
 
   return (
     <div className="flex h-screen">
@@ -59,15 +69,6 @@ export default function DashboardShell({ children }) {
             )}
           </Button>
         </div>
-
-        {!collapsed && (
-          <div className="flex items-center gap-3 mb-6">
-            <div>
-              <p className="font-semibold">{session.user.name}</p>
-              <p className="text-sm text-gray-400">{session.user.email}</p>
-            </div>
-          </div>
-        )}
 
         <nav className="flex-1">
           <Link href="/dashboard/linkedin" className="w-full">
@@ -112,15 +113,47 @@ export default function DashboardShell({ children }) {
             </Button>
           </Link>
         </nav>
-
-        <Button
+        {collapsed ? (
+          <>
+            <div className="flex flex-colrounded-lg items-center  justify-between mb-4">
+              <img
+                src={user?.user.profile_photo || ""}
+                alt="Profile"
+                className="w-full rounded-full mr-2"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-col bg-white rounded-lg p-2 items-center  justify-between mb-4">
+              <img
+                src={user?.user.profile_photo || ""}
+                alt="Profile"
+                className="w-1/4 rounded-full mr-2"
+              />
+              <div className="flex flex-col items-center justify-center">
+                <h2 className="capitalize text-black text-lg text-whie">
+                  {user?.user.name}
+                </h2>
+                <h2 className="text-xs text-gray-700">{user?.user.email}</h2>
+              </div>
+            </div>
+          </>
+        )}
+        <LogoutButton />
+        {/* <Button
           variant="destructive"
-          onClick={() => signOut()}
+          onClick={() =>
+            signOut({
+              callbackUrl: "/",
+              redirect: true,
+            })
+          }
           className="mt-auto cursor-pointer"
         >
-          <LogOut className="mr-2 h-4 w-4" />
+        
           {!collapsed && "Logout"}
-        </Button>
+        </Button> */}
       </aside>
 
       <main className="flex-1 p-8 space-y-6 overflow-y-auto">{children}</main>
